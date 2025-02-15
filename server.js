@@ -94,7 +94,8 @@ app.post('/signup/', async (request,response)=>{
     
     const dbResponse = await db.run(createUserQuery, [name, email, hashedPassword]);
 
-    response.status(201).send(`Created new user with ID: ${dbResponse.lastID}`);
+    json({ message: "User created successfully", userId: dbResponse.lastID });
+
   } catch (error) {
     console.error(error);
     response.status(500).send("Internal Server Error");
