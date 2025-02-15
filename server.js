@@ -48,13 +48,13 @@ const authenticateToken= async (request,response,next)=>{
   }
 
   if(jwtToken===undefined){
-   return response.status(401).send("Invalid JWT Token")
+   return response.status(401).send({"message":"Invalid JWT Token"})
   }
 
   jwt.verify(jwtToken,"MY_SECRET_TOKEN", async (err,payload)=>{
 
     if(err){
-      return response.status(401).send("MY_SECRET_TOKEN")
+      return response.status(401).send({message:"Invalid JWT Token"})
     }
     
       request.email=payload.email;
@@ -81,7 +81,7 @@ app.post('/signup/', async (request,response)=>{
     const dbUser = await db.get(selectUserQuery, [email]);
 
     if (dbUser) {
-      return response.status(400).send("User already exists");
+      return response.status(400).send({"message":"User already exists"});
     }
 
     // Hash the password
@@ -98,7 +98,7 @@ app.post('/signup/', async (request,response)=>{
 
   } catch (error) {
     console.error(error);
-    response.status(500).send("Internal Server Error");
+    response.status(500).send({"message":"Internal Server Error"});
   }
   
 
@@ -116,7 +116,7 @@ app.post('/login/', async (request,response)=>{
      const dbUser = await db.get(selectUserQuery, [email]);
 
      if(dbUser===undefined){
-      return response.status(400).send("Invalid User")
+      return response.status(400).send({"message":"Invalid User"})
      }
 
      const isPasswordMatched = await bcrypt.compare(password, dbUser.password);
@@ -131,7 +131,7 @@ app.post('/login/', async (request,response)=>{
       response.status(200).send({jwtToken})
 
      }else{
-      response.status(401).send("Invalid Password")
+      response.status(401).send({"message":"Invalid User"})
       
      }
 
@@ -139,7 +139,7 @@ app.post('/login/', async (request,response)=>{
 
 
   }catch(error){
-    response.status(500).send("Internal Server Error");
+    response.status(500).send({"message":"Internal Server Error"});
   }
 
 })
@@ -171,7 +171,7 @@ app.post("/tasks/", authenticateToken, async (request,response)=>{
    VALUES (?,?,?,?,?)`;
 
   await db.run(insertQuery,[title,description,status,dueDate,userId]);
-  response.status(201).send("Task Succesfully Added");
+  response.status(201).send({"message":"Task Succesfully Added"});
 
 })
 
@@ -216,7 +216,7 @@ app.put("/tasks/:taskId", authenticateToken, async (request,response)=>{
 
   await db.run(updateQuery, values);
 
-  response.status(200).send("Task updated successfully")
+  response.status(200).send({"message":"Task updated successfully"})
 
 })
 
@@ -231,6 +231,6 @@ app.delete("/tasks/:taskId", authenticateToken, async(request,response)=>{
   const deleteQuery=`DELETE FROM tasks WHERE id=? AND user_id=?`;
   await db.run(deleteQuery,[taskId,userId])
 
-  response.status(200).send("Successfully Deleted")
+  response.status(200).send({"message":"Successfully Deleted"})
 
 })
