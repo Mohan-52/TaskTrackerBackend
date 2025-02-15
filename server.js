@@ -72,7 +72,9 @@ const getUserId = async (email) => {
 
 
 
-app.post('/signup/', async (request,response)=>{
+
+
+app.post('/signup/', async (request, response) => {
   try {
     const { name, email, password } = request.body;
 
@@ -81,7 +83,7 @@ app.post('/signup/', async (request,response)=>{
     const dbUser = await db.get(selectUserQuery, [email]);
 
     if (dbUser) {
-      return response.status(400).send({"message":"User already exists"});
+      return response.status(400).json({ "message": "User already exists" });
     }
 
     // Hash the password
@@ -94,15 +96,14 @@ app.post('/signup/', async (request,response)=>{
     
     const dbResponse = await db.run(createUserQuery, [name, email, hashedPassword]);
 
-    json({ message: "User created successfully", userId: dbResponse.lastID });
+    response.status(201).json({ message: "User created successfully", userId: dbResponse.lastID });
 
   } catch (error) {
-    console.error(error);
-    response.status(500).send({"message":"Internal Server Error"});
+    console.error("Signup Error:", error);
+    response.status(500).json({ "message": "Internal Server Error" });
   }
-  
+});
 
-})
 
 
 
