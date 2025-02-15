@@ -117,7 +117,7 @@ app.post('/login/', async (request,response)=>{
      const dbUser = await db.get(selectUserQuery, [email]);
 
      if(dbUser===undefined){
-      return response.status(400).send({"message":"Invalid User"})
+      return response.status(401).send({"message":"Invalid User"})
      }
 
      const isPasswordMatched = await bcrypt.compare(password, dbUser.password);
@@ -150,7 +150,7 @@ app.post('/login/', async (request,response)=>{
 app.get("/tasks/", authenticateToken, async (request,response)=>{
   const {email}=request;
   const userId=await getUserId(email);
-  console.log(userId)
+ 
 
   const tasksQuey=`SELECT * FROM tasks WHERE user_id=?`;
   const tasks=await db.all(tasksQuey,[userId]);
@@ -163,15 +163,15 @@ app.get("/tasks/", authenticateToken, async (request,response)=>{
 app.post("/tasks/", authenticateToken, async (request,response)=>{
 
   const {email}=request;
-  const {title,description,status,dueDate}=request.body
+  const {title,description,status,dueDate,createdAt}=request.body
 
   const userId=await getUserId(email);
 
   const insertQuery=`INSERT INTO tasks 
-   (title,description,status,due_date,user_id)
-   VALUES (?,?,?,?,?)`;
+   (title,description,status,due_date,user_id,created_at)
+   VALUES (?,?,?,?,?,?)`;
 
-  await db.run(insertQuery,[title,description,status,dueDate,userId]);
+  await db.run(insertQuery,[title,description,status,dueDate,userId,createdAt]);
   response.status(201).send({"message":"Task Succesfully Added"});
 
 })
