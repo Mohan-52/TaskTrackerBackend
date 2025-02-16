@@ -22,11 +22,7 @@ const initServerAndDb= async ()=>{
 
   try{
 
-    if (!fs.existsSync("/data")) {
-      fs.mkdirSync("/data");
-    }
-
-      db=await open({
+   db=await open({
       filename:dbPath,
       driver:sqlite3.Database
     })
@@ -174,6 +170,11 @@ app.get("/tasks/:taskId", authenticateToken, async (request,response)=>{
 
   const tasksQuey=`SELECT * FROM tasks WHERE user_id=? AND id=?`;
   const task=await db.get(tasksQuey,[userId,taskId]);
+
+  if (!task) {
+    return response.status(404).json({ message: "Task Not Found" });
+  }
+
   
   response.send(task);
 })
