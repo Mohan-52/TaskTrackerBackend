@@ -5,8 +5,10 @@ const app=express()
 const {open}=require("sqlite")
 const sqlite3=require("sqlite3")
 
+const fs = require("fs");
+
 const path=require("path")
-const dbPath=path.join(__dirname,"taskTracker.db")
+const dbPath = path.join("/data", "taskTracker.db");
 
 const bcrypt=require("bcrypt")
 const jwt=require("jsonwebtoken")
@@ -19,6 +21,11 @@ let db;
 const initServerAndDb= async ()=>{
 
   try{
+
+    if (!fs.existsSync("/data")) {
+      fs.mkdirSync("/data");
+    }
+
       db=await open({
       filename:dbPath,
       driver:sqlite3.Database
