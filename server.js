@@ -165,6 +165,19 @@ app.get("/tasks/", authenticateToken, async (request,response)=>{
   response.send(tasks);
 })
 
+app.get("/tasks/:taskId", authenticateToken, async (request,response)=>{
+  const {email}=request;
+  const userId=await getUserId(email);
+
+  const {taskId}=request.params
+ 
+
+  const tasksQuey=`SELECT * FROM tasks WHERE user_id=? AND id=?`;
+  const task=await db.get(tasksQuey,[userId,taskId]);
+  
+  response.send(task);
+})
+
 
 
 app.post("/tasks/", authenticateToken, async (request,response)=>{
