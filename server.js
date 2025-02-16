@@ -8,7 +8,11 @@ const sqlite3=require("sqlite3")
 const fs = require("fs");
 
 const path=require("path")
-const dbPath = path.join("/data", "taskTracker.db");
+const dbPath = process.env.RENDER
+  ? "/data/taskTracker.db" 
+  : path.join(__dirname, "taskTracker.db"); 
+  
+console.log("Using database path:", dbPath);
 
 const bcrypt=require("bcrypt")
 const jwt=require("jsonwebtoken")
