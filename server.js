@@ -185,15 +185,15 @@ app.get("/tasks/:taskId", authenticateToken, async (request,response)=>{
 app.post("/tasks/", authenticateToken, async (request,response)=>{
 
   const {email}=request;
-  const {title,description,status,dueDate,createdAt}=request.body
+  const {id,title,description,status,dueDate,createdAt}=request.body
 
   const userId=await getUserId(email);
 
   const insertQuery=`INSERT INTO tasks 
-   (title,description,status,due_date,user_id,created_at)
-   VALUES (?,?,?,?,?,?)`;
+   (id,title,description,status,due_date,user_id,created_at)
+   VALUES (?,?,?,?,?,?,?)`;
 
-  await db.run(insertQuery,[title,description,status,dueDate,userId,createdAt]);
+  await db.run(insertQuery,[id,title,description,status,dueDate,userId,createdAt]);
   response.status(201).send({"message":"Task Succesfully Added"});
 
 })
